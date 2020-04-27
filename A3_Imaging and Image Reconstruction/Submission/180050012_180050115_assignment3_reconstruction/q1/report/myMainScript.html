@@ -1,0 +1,439 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>myMainScript</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-04-05"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Inbuilt filtered backprojection</a></li><li><a href="#2">myFilter images</a></li><li><a href="#4">Part B</a></li><li><a href="#6">Part C</a></li></ul></div><h2 id="1">Inbuilt filtered backprojection</h2><pre class="codeinput">clear;
+
+A = double(imread(<span class="string">"SheppLogan256.png"</span>));
+B = phantom(128);
+theta=[0:3:179];
+
+f1=figure(1);
+imshow(A,[]);
+title(<span class="string">'Original Image'</span>);
+
+[R,xp]=radon(A,theta);
+I1=iradon(R,theta,<span class="string">'linear'</span>, 256);
+I2=iradon(R,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>, 256);
+
+iptsetpref(<span class="string">'ImshowAxesVisible'</span>,<span class="string">'on'</span>);
+f2=figure(2);
+imshow(R,[],<span class="string">'Xdata'</span>,theta,<span class="string">'Ydata'</span>,xp,<span class="string">'InitialMagnification'</span>,<span class="string">'fit'</span>);
+xlabel(<span class="string">'\theta (degrees)'</span>);
+ylabel(<span class="string">'x'''</span>);
+title(<span class="string">'Radon Transform'</span>);
+colormap(gca,hot), colorbar;
+
+iptsetpref(<span class="string">'ImshowAxesVisible'</span>,<span class="string">'off'</span>);
+f3=figure(3);
+imshow(I1,[]);
+title(<span class="string">'Filtered Backprojection (in-built)'</span>);
+
+f4=figure(4);
+imshow(I2,[]);
+title(<span class="string">'Unfiltered Backprojection (in-built)'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_01.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_04.png" alt=""> <h2 id="2">myFilter images</h2><pre class="codeinput"><span class="comment">% Ram-Lak</span>
+R_filt = myFilter(R,theta,xp,1,1);
+bkproj_ramlak_1 = iradon(R_filt,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+R_filt = myFilter(R,theta,xp,1,0.5);
+bkproj_ramlak_2 = iradon(R_filt,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+
+<span class="comment">% Shepp-Logan</span>
+R_filt = myFilter(R,theta,xp,2,1);
+bkproj_shepp_1 = iradon(R_filt,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+R_filt = myFilter(R,theta,xp,2,0.5);
+bkproj_shepp_2 = iradon(R_filt,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+
+<span class="comment">% Cosine</span>
+R_filt = myFilter(R,theta,xp,3,1);
+bkproj_cos_1 = iradon(R_filt,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+R_filt = myFilter(R,theta,xp,3,0.5);
+bkproj_cos_2 = iradon(R_filt,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+
+f5=figure(5);
+subplot(2,3,1)
+imshow(bkproj_ramlak_1, []);
+title(<span class="string">'Ram-Lak L=1'</span>);
+<span class="comment">% colorbar;</span>
+
+subplot(2,3,4)
+imshow(bkproj_ramlak_2, []);
+title(<span class="string">'Ram-Lak L=0.5'</span>);
+<span class="comment">% colorbar;</span>
+
+subplot(2,3,2)
+imshow(bkproj_shepp_1, []);
+title(<span class="string">'Shepp-Logan L=1'</span>);
+<span class="comment">% colorbar;</span>
+
+subplot(2,3,5)
+imshow(bkproj_shepp_2, []);
+title(<span class="string">'Shepp-Logan L=0.5'</span>);
+<span class="comment">% colorbar;</span>
+
+subplot(2,3,3)
+imshow(bkproj_cos_1, []);
+title(<span class="string">'Cosine L=1'</span>);
+<span class="comment">% colorbar;</span>
+
+subplot(2,3,6)
+imshow(bkproj_cos_1, []);
+title(<span class="string">'Cosine L=0.5'</span>);
+<span class="comment">% colorbar;</span>
+</pre><img vspace="5" hspace="5" src="myMainScript_05.png" alt=""> <pre class="codeinput">disp([<span class="string">"The cosine filter gives the best results in this case, among the three."</span>]);
+disp([<span class="string">"Across all filters, the images at L=0.5 seem to be sharper with better edges than at L=1"</span>]);
+</pre><pre class="codeoutput">The cosine filter gives the best results in this case, among the three.
+Across all filters, the images at L=0.5 seem to be sharper with better edges than at L=1
+</pre><h2 id="4">Part B</h2><pre class="codeinput">S0 = A;
+S1 = imgaussfilt(A, 1);
+S5 = imgaussfilt(A, 5);
+
+[RR0,xp0]=radon(S0,theta);
+[RR1,xp1]=radon(S1,theta);
+[RR5,xp5]=radon(S5,theta);
+
+RRfilt0 = myFilter(RR0,theta,xp0,1,1);
+RRfilt1 = myFilter(RR1,theta,xp1,1,1);
+RRfilt5 = myFilter(RR5,theta,xp5,1,1);
+
+R0 = iradon(RRfilt0,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+R1 = iradon(RRfilt1,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+R5 = iradon(RRfilt5,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+
+RRMSE0 = RRMSE(S0, R0);
+RRMSE1 = RRMSE(S1, R1);
+RRMSE5 = RRMSE(S5, R5);
+
+disp([<span class="string">"using myFilter for backprojection:"</span>]);
+disp([<span class="string">'RRMSE for S0: '</span>, num2str(RRMSE0)]);
+disp([<span class="string">'RRMSE for S1: '</span>, num2str(RRMSE1)]);
+disp([<span class="string">'RRMSE for S5: '</span>, num2str(RRMSE5)]);
+
+f6=figure(6);
+subplot(2,3,1);
+imshow(S0,[]);
+title(<span class="string">'S0'</span>);
+<span class="comment">% colorbar;</span>
+
+subplot(2,3,2);
+imshow(S1,[]);
+title(<span class="string">'S1'</span>);
+<span class="comment">% colorbar;</span>
+
+subplot(2,3,3);
+imshow(S5,[]);
+title(<span class="string">'S5'</span>);
+<span class="comment">% colorbar;</span>
+
+subplot(2,3,4);
+imshow(R0,[]);
+title(<span class="string">'R0'</span>);
+<span class="comment">% colorbar;</span>
+
+subplot(2,3,5);
+imshow(R1,[]);
+title(<span class="string">'R1'</span>);
+<span class="comment">% colorbar;</span>
+
+subplot(2,3,6);
+imshow(R5,[]);
+title(<span class="string">'R5'</span>);
+<span class="comment">% colorbar;</span>
+</pre><pre class="codeoutput">using myFilter for backprojection:
+RRMSE for S0: 0.32697
+RRMSE for S1: 0.20792
+RRMSE for S5: 0.20129
+</pre><img vspace="5" hspace="5" src="myMainScript_06.png" alt=""> <pre class="codeinput">disp([<span class="string">"The most blurred image, that is S5 has the least RRMSE, while S0 has the highest."</span>]);
+disp([<span class="string">"WE observe that RRMSE is decreasing on increasing the Gaussian blur."</span>]);
+disp([<span class="string">"Blurring results in attenuating high frequency components in the image."</span>]);
+disp([<span class="string">"Since the most blurred image will have the most attenuated high frequency components, the reconstruction error is the least for it after filtered backprojection"</span>]);
+disp([<span class="string">"Hence the observation"</span>]);
+</pre><pre class="codeoutput">The most blurred image, that is S5 has the least RRMSE, while S0 has the highest.
+WE observe that RRMSE is decreasing on increasing the Gaussian blur.
+Blurring results in attenuating high frequency components in the image.
+Since the most blurred image will have the most attenuated high frequency components, the reconstruction error is the least for it after filtered backprojection
+Hence the observation
+</pre><h2 id="6">Part C</h2><pre class="codeinput">N=length(xp);
+L_arr = linspace((1/N), 1, N);
+
+<span class="keyword">for</span> i=1:N
+ RRfilt0 = myFilter(RR0,theta,xp0,1,L_arr(i));
+ RRfilt1 = myFilter(RR1,theta,xp1,1,L_arr(i));
+ RRfilt5 = myFilter(RR5,theta,xp5,1,L_arr(i));
+ R0 = iradon(RRfilt0,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+ R1 = iradon(RRfilt1,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+ R5 = iradon(RRfilt5,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+ RRMSE_S0(i) = RRMSE(S0,R0);
+ RRMSE_S1(i) = RRMSE(S1,R1);
+ RRMSE_S5(i) = RRMSE(S5,R5);
+<span class="keyword">end</span>
+
+f7=figure(7);
+plot(RRMSE_S0);
+hold <span class="string">on</span>;
+plot(RRMSE_S1);
+hold <span class="string">on</span>;
+plot(RRMSE_S5);
+legend(<span class="string">'S0'</span>,<span class="string">'S1'</span>,<span class="string">'S5'</span>);
+title(<span class="string">'Plot of RRMSE on increasing L'</span>);
+hold <span class="string">off</span>;
+</pre><img vspace="5" hspace="5" src="myMainScript_07.png" alt=""> <pre class="codeinput">disp([<span class="string">"Again as the increase in blurring corresponds to attenuation of higher frequency components, reconstruction of S5 is more steeply dependent on lower L values"</span>]);
+disp([<span class="string">"Its RRMSE thus decreases strongly for lower values of L and isn't affected further."</span>]);
+disp([<span class="string">"We observe that the higher the blur, the more steep is the curve."</span>])
+</pre><pre class="codeoutput">Again as the increase in blurring corresponds to attenuation of higher frequency components, reconstruction of S5 is more steeply dependent on lower L values
+Its RRMSE thus decreases strongly for lower values of L and isn't affected further.
+We observe that the higher the blur, the more steep is the curve.
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%  Inbuilt filtered backprojection
+clear;
+
+A = double(imread("SheppLogan256.png"));
+B = phantom(128);
+theta=[0:3:179];
+
+f1=figure(1);
+imshow(A,[]);
+title('Original Image');
+
+[R,xp]=radon(A,theta);
+I1=iradon(R,theta,'linear', 256);
+I2=iradon(R,theta,'linear','none', 256);
+
+iptsetpref('ImshowAxesVisible','on');
+f2=figure(2);
+imshow(R,[],'Xdata',theta,'Ydata',xp,'InitialMagnification','fit');
+xlabel('\theta (degrees)');
+ylabel('x''');
+title('Radon Transform');
+colormap(gca,hot), colorbar;
+
+iptsetpref('ImshowAxesVisible','off');
+f3=figure(3);
+imshow(I1,[]);
+title('Filtered Backprojection (in-built)');
+
+f4=figure(4);
+imshow(I2,[]);
+title('Unfiltered Backprojection (in-built)');
+
+%%  myFilter images
+
+% Ram-Lak
+R_filt = myFilter(R,theta,xp,1,1);
+bkproj_ramlak_1 = iradon(R_filt,theta,'linear','none',1,256);
+R_filt = myFilter(R,theta,xp,1,0.5);
+bkproj_ramlak_2 = iradon(R_filt,theta,'linear','none',1,256);
+
+% Shepp-Logan
+R_filt = myFilter(R,theta,xp,2,1);
+bkproj_shepp_1 = iradon(R_filt,theta,'linear','none',1,256);
+R_filt = myFilter(R,theta,xp,2,0.5);
+bkproj_shepp_2 = iradon(R_filt,theta,'linear','none',1,256);
+
+% Cosine
+R_filt = myFilter(R,theta,xp,3,1);
+bkproj_cos_1 = iradon(R_filt,theta,'linear','none',1,256);
+R_filt = myFilter(R,theta,xp,3,0.5);
+bkproj_cos_2 = iradon(R_filt,theta,'linear','none',1,256);
+
+f5=figure(5);
+subplot(2,3,1)
+imshow(bkproj_ramlak_1, []);
+title('Ram-Lak L=1');
+% colorbar;
+
+subplot(2,3,4)
+imshow(bkproj_ramlak_2, []);
+title('Ram-Lak L=0.5');
+% colorbar;
+
+subplot(2,3,2)
+imshow(bkproj_shepp_1, []);
+title('Shepp-Logan L=1');
+% colorbar;
+
+subplot(2,3,5)
+imshow(bkproj_shepp_2, []);
+title('Shepp-Logan L=0.5');
+% colorbar;
+
+subplot(2,3,3)
+imshow(bkproj_cos_1, []);
+title('Cosine L=1');
+% colorbar;
+
+subplot(2,3,6)
+imshow(bkproj_cos_1, []);
+title('Cosine L=0.5');
+% colorbar;
+
+%%
+disp(["The cosine filter gives the best results in this case, among the three."]);
+disp(["Across all filters, the images at L=0.5 seem to be sharper with better edges than at L=1"]);
+
+%%  Part B
+
+S0 = A;
+S1 = imgaussfilt(A, 1);
+S5 = imgaussfilt(A, 5);
+
+[RR0,xp0]=radon(S0,theta);
+[RR1,xp1]=radon(S1,theta);
+[RR5,xp5]=radon(S5,theta);
+
+RRfilt0 = myFilter(RR0,theta,xp0,1,1);
+RRfilt1 = myFilter(RR1,theta,xp1,1,1);
+RRfilt5 = myFilter(RR5,theta,xp5,1,1);
+
+R0 = iradon(RRfilt0,theta,'linear','none',1,256);
+R1 = iradon(RRfilt1,theta,'linear','none',1,256);
+R5 = iradon(RRfilt5,theta,'linear','none',1,256);
+
+RRMSE0 = RRMSE(S0, R0);
+RRMSE1 = RRMSE(S1, R1);
+RRMSE5 = RRMSE(S5, R5);
+
+disp(["using myFilter for backprojection:"]);
+disp(['RRMSE for S0: ', num2str(RRMSE0)]);
+disp(['RRMSE for S1: ', num2str(RRMSE1)]);
+disp(['RRMSE for S5: ', num2str(RRMSE5)]);
+
+f6=figure(6);
+subplot(2,3,1);
+imshow(S0,[]);
+title('S0');
+% colorbar;
+
+subplot(2,3,2);
+imshow(S1,[]);
+title('S1');
+% colorbar;
+
+subplot(2,3,3);
+imshow(S5,[]);
+title('S5');
+% colorbar;
+
+subplot(2,3,4);
+imshow(R0,[]);
+title('R0');
+% colorbar;
+
+subplot(2,3,5);
+imshow(R1,[]);
+title('R1');
+% colorbar;
+
+subplot(2,3,6);
+imshow(R5,[]);
+title('R5');
+% colorbar;
+
+%%
+disp(["The most blurred image, that is S5 has the least RRMSE, while S0 has the highest."]);
+disp(["WE observe that RRMSE is decreasing on increasing the Gaussian blur."]);
+disp(["Blurring results in attenuating high frequency components in the image."]);
+disp(["Since the most blurred image will have the most attenuated high frequency components, the reconstruction error is the least for it after filtered backprojection"]);
+disp(["Hence the observation"]);
+
+%%  Part C
+
+N=length(xp);
+L_arr = linspace((1/N), 1, N);
+
+for i=1:N
+ RRfilt0 = myFilter(RR0,theta,xp0,1,L_arr(i));
+ RRfilt1 = myFilter(RR1,theta,xp1,1,L_arr(i));
+ RRfilt5 = myFilter(RR5,theta,xp5,1,L_arr(i));
+ R0 = iradon(RRfilt0,theta,'linear','none',1,256);
+ R1 = iradon(RRfilt1,theta,'linear','none',1,256);
+ R5 = iradon(RRfilt5,theta,'linear','none',1,256);
+ RRMSE_S0(i) = RRMSE(S0,R0);
+ RRMSE_S1(i) = RRMSE(S1,R1);
+ RRMSE_S5(i) = RRMSE(S5,R5);
+end
+
+f7=figure(7);
+plot(RRMSE_S0);
+hold on;
+plot(RRMSE_S1);
+hold on;
+plot(RRMSE_S5);
+legend('S0','S1','S5');
+title('Plot of RRMSE on increasing L');
+hold off;
+
+%%
+disp(["Again as the increase in blurring corresponds to attenuation of higher frequency components, reconstruction of S5 is more steeply dependent on lower L values"]);
+disp(["Its RRMSE thus decreases strongly for lower values of L and isn't affected further."]);
+disp(["We observe that the higher the blur, the more steep is the curve."])
+
+%%
+##### SOURCE END #####
+--></body></html>

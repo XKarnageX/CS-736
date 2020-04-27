@@ -1,0 +1,2 @@
+Q2 Part 1:
+We know that the Radon transform is a linear transform. Basically, we want to find the matrix corresponding to this transform. This will be A such that Ax = R where x is the vectorized image and R is the vectorized radon transform of that image. We can find the basis vectors for the radon transform, by finding the radon transform of each image basis vector and then concatenating them. 
