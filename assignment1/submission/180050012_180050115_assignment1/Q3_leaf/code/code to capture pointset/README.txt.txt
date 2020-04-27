@@ -1,1 +1,0 @@
-The file was used to capture points selected manually, image by image.
